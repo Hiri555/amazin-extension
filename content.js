@@ -3,19 +3,21 @@
 let detectedVideos = [];
 let capturedVideoUrls = []; // URLs capturées depuis les requêtes réseau
 
-// Fonction pour valider si une URL est téléchargeable
-function isDownloadableVideo(url) {
+// Fonction pour vérifier si une URL ressemble à une vidéo (n'importe quel format)
+function isVideoUrl(url) {
   if (!url) return false;
 
-  // Filtrer les URLs de streaming non téléchargeables
-  const streamingFormats = ['.m3u8', '.mpd', '/dash/', '/hls/', 'm3u8', 'manifest'];
-  if (streamingFormats.some(format => url.toLowerCase().includes(format))) {
-    return false;
-  }
+  // Accepter TOUS les formats vidéo, y compris le streaming
+  const videoPatterns = [
+    '.mp4', '.webm', '.mov', '.avi', '.mkv',  // Formats classiques
+    '.m3u8', '.mpd', '/hls/', '/dash/',       // Streaming
+    'm3u8', 'manifest', 'playlist',           // Manifests
+    '/video/', 'video-', '_video',            // URLs contenant "video"
+    '.ts'                                      // Segments HLS
+  ];
 
-  // Accepter seulement les formats vidéo téléchargeables
-  const downloadableFormats = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
-  return downloadableFormats.some(format => url.toLowerCase().includes(format));
+  const lowerUrl = url.toLowerCase();
+  return videoPatterns.some(pattern => lowerUrl.includes(pattern));
 }
 
 // Fonction pour extraire le thumbnail d'un élément vidéo
@@ -49,7 +51,7 @@ function findAllVideos() {
     const sources = [];
 
     // Source directe de la vidéo
-    if (video.src && isDownloadableVideo(video.src) && !seenUrls.has(video.src)) {
+    if (video.src && !seenUrls.has(video.src)) {
       sources.push(video.src);
       seenUrls.add(video.src);
     }
@@ -57,7 +59,7 @@ function findAllVideos() {
     // Sources dans les balises <source>
     const sourceElements = video.querySelectorAll('source');
     sourceElements.forEach(source => {
-      if (source.src && isDownloadableVideo(source.src) && !seenUrls.has(source.src)) {
+      if (source.src && !seenUrls.has(source.src)) {
         sources.push(source.src);
         seenUrls.add(source.src);
       }
@@ -65,6 +67,7 @@ function findAllVideos() {
 
     if (sources.length > 0) {
       const thumbnail = getThumbnail(video);
+      const isStreaming = sources.some(src => src.includes('.m3u8') || src.includes('.mpd'));
       videos.push({
         type: 'video-element',
         index: index + 1,
@@ -73,7 +76,9 @@ function findAllVideos() {
         thumbnail: thumbnail,
         title: `Video ${index + 1}`,
         width: video.videoWidth || 0,
-        height: video.videoHeight || 0
+        height: video.videoHeight || 0,
+        streaming: isStreaming,
+        videoElement: video // Garder référence pour capture
       });
     }
   });
@@ -85,7 +90,7 @@ function findAllVideos() {
                      element.getAttribute('data-src') ||
                      element.getAttribute('data-video-src');
 
-    if (videoUrl && isDownloadableVideo(videoUrl) && !seenUrls.has(videoUrl)) {
+    if (videoUrl && !seenUrls.has(videoUrl)) {
       seenUrls.add(videoUrl);
 
       // Chercher un thumbnail associé
@@ -95,13 +100,15 @@ function findAllVideos() {
         thumbnail = img.src;
       }
 
+      const isStreaming = videoUrl.includes('.m3u8') || videoUrl.includes('.mpd');
       videos.push({
         type: 'data-attribute',
         index: index + 1,
         sources: [videoUrl],
         thumbnail: thumbnail,
         poster: thumbnail,
-        title: `Amazon Video ${index + 1}`
+        title: `Amazon Video ${index + 1}`,
+        streaming: isStreaming
       });
     }
   });
@@ -112,14 +119,17 @@ function findAllVideos() {
     '#imageBlock video, ' +
     '.videoPlayer, ' +
     '[id*="video"]:not(script), ' +
-    '[class*="video"]:not(script)'
+    '[class*="video"]:not(script), ' +
+    '[id*="review"], ' +  // Avis clients
+    '[class*="review"]'    // Avis clients
   );
 
   amazonVideoContainers.forEach((container, index) => {
     const video = container.tagName === 'VIDEO' ? container : container.querySelector('video');
-    if (video && video.src && isDownloadableVideo(video.src) && !seenUrls.has(video.src)) {
+    if (video && video.src && !seenUrls.has(video.src)) {
       seenUrls.add(video.src);
       const thumbnail = getThumbnail(video);
+      const isStreaming = video.src.includes('.m3u8') || video.src.includes('.mpd');
 
       videos.push({
         type: 'amazon-product',
@@ -129,15 +139,43 @@ function findAllVideos() {
         thumbnail: thumbnail,
         title: `Amazon Product Video ${index + 1}`,
         width: video.videoWidth || 0,
-        height: video.videoHeight || 0
+        height: video.videoHeight || 0,
+        streaming: isStreaming,
+        videoElement: video
       });
     }
   });
 
-  // 4. Ajouter les vidéos capturées depuis les requêtes réseau
+  // 4. Chercher dans les SCRIPTS (vidéos d'avis clients!)
+  const scripts = document.querySelectorAll('script');
+  const videoUrlPattern = /(https?:\/\/[^\s"']+\.(?:mp4|webm|ogg|m3u8|mpd|ts)(?:[^\s"']*)?)/gi;
+
+  scripts.forEach((script) => {
+    if (script.textContent) {
+      const matches = script.textContent.match(videoUrlPattern);
+      if (matches) {
+        matches.forEach((url) => {
+          if (!seenUrls.has(url)) {
+            seenUrls.add(url);
+            const isStreaming = url.includes('.m3u8') || url.includes('.mpd') || url.includes('.ts');
+            videos.push({
+              type: 'script-extracted',
+              index: videos.filter(v => v.type === 'script-extracted').length + 1,
+              sources: [url],
+              title: `Extracted Video ${videos.filter(v => v.type === 'script-extracted').length + 1}`,
+              streaming: isStreaming
+            });
+          }
+        });
+      }
+    }
+  });
+
+  // 5. Ajouter les vidéos capturées depuis les requêtes réseau
   capturedVideoUrls.forEach((capturedVideo, index) => {
     if (!seenUrls.has(capturedVideo.url)) {
       seenUrls.add(capturedVideo.url);
+      const isStreaming = capturedVideo.url.includes('.m3u8') || capturedVideo.url.includes('.mpd');
       videos.push({
         type: 'network-captured',
         index: index + 1,
@@ -145,7 +183,8 @@ function findAllVideos() {
         thumbnail: capturedVideo.thumbnail || null,
         poster: capturedVideo.thumbnail || null,
         title: `Captured Video ${index + 1}`,
-        size: capturedVideo.size || 0
+        size: capturedVideo.size || 0,
+        streaming: isStreaming
       });
     }
   });
@@ -168,7 +207,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ success: true });
   } else if (request.action === 'addCapturedVideo') {
     // Ajouter une vidéo capturée depuis les requêtes réseau
-    if (request.videoData && isDownloadableVideo(request.videoData.url)) {
+    if (request.videoData && isVideoUrl(request.videoData.url)) {
       const exists = capturedVideoUrls.some(v => v.url === request.videoData.url);
       if (!exists) {
         capturedVideoUrls.push(request.videoData);

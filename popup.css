@@ -179,6 +179,36 @@ header h1 {
   text-transform: uppercase;
 }
 
+.video-type.type-streaming {
+  background: #e74c3c;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.streaming-badge {
+  font-size: 11px;
+  color: #e74c3c;
+  font-weight: 600;
+  margin: 5px 0;
+  display: inline-block;
+}
+
+.streaming-hint {
+  font-size: 9px;
+  color: #888;
+  margin-top: 5px;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.streaming-video {
+  border-left: 3px solid #e74c3c;
+}
+
 .video-url {
   font-size: 11px;
   color: #666;

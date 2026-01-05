@@ -78,11 +78,12 @@ function displayVideos(videos) {
 
   videoList.innerHTML = videos.map((video, index) => {
     const mainUrl = video.sources[0];
-    const filename = `amazon-video-${index + 1}.mp4`;
+    const filename = `amazon-video-${index + 1}.${video.streaming ? 'm3u8' : 'mp4'}`;
     const hasThumbnail = video.thumbnail || video.poster;
+    const isStreaming = video.streaming || false;
 
     return `
-      <div class="video-item" data-index="${index}">
+      <div class="video-item ${isStreaming ? 'streaming-video' : ''}" data-index="${index}">
         ${hasThumbnail ? `
           <div class="video-thumbnail-container">
             <img src="${escapeHtml(video.thumbnail || video.poster)}"
@@ -94,18 +95,20 @@ function displayVideos(videos) {
         <div class="video-content">
           <div class="video-header">
             <span class="video-title">${video.title}</span>
-            <span class="video-type">${video.type}</span>
+            <span class="video-type ${isStreaming ? 'type-streaming' : ''}">${video.type}</span>
           </div>
+          ${isStreaming ? '<div class="streaming-badge">🔴 STREAMING (HLS/m3u8)</div>' : ''}
           <div class="video-url">${truncateUrl(mainUrl, 45)}</div>
           ${video.width && video.height ? `<div class="video-info-text">📐 ${video.width}x${video.height}</div>` : ''}
           <div class="video-actions">
             <button class="btn btn-preview preview-video" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" data-title="${escapeHtml(video.title)}">
               👁️ Prévisualiser
             </button>
-            <button class="btn btn-download download-single" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}">
-              ⬇️ Télécharger
+            <button class="btn btn-download download-single" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" title="${isStreaming ? 'Télécharge l\'URL (peut ne pas fonctionner pour le streaming)' : 'Télécharger'}">
+              ⬇️ ${isStreaming ? 'Essayer' : 'Télécharger'}
             </button>
             ${video.sources.length > 1 ? `<div style="font-size: 10px; color: #666; margin-top: 5px;">+${video.sources.length - 1} source(s)</div>` : ''}
+            ${isStreaming ? '<div class="streaming-hint">💡 Utilisez la prévisualisation puis un outil d\'enregistrement d\'écran pour les vidéos streaming</div>' : ''}
           </div>
         </div>
       </div>

@@ -3,11 +3,17 @@
 // Stockage des vidéos capturées par onglet
 const capturedVideosByTab = new Map();
 
-// Fonction pour valider si une URL est une vidéo téléchargeable
+// Fonction pour valider si une URL est une vidéo (tous formats)
 function isVideoUrl(url) {
-  const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
+  const videoPatterns = [
+    '.mp4', '.webm', '.mov', '.avi', '.mkv',  // Formats classiques
+    '.m3u8', '.mpd', '/hls/', '/dash/',       // Streaming
+    'm3u8', 'manifest', 'playlist',           // Manifests
+    '/video/', 'video-', '_video',            // URLs contenant "video"
+    '.ts'                                      // Segments HLS
+  ];
   const lowerUrl = url.toLowerCase();
-  return videoExtensions.some(ext => lowerUrl.includes(ext));
+  return videoPatterns.some(pattern => lowerUrl.includes(pattern));
 }
 
 // Intercepter les requêtes réseau pour capturer les URLs de vidéos

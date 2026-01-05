@@ -4,14 +4,15 @@ Extension Chrome pour télécharger facilement toutes les vidéos d'une page pro
 
 ## ✨ Fonctionnalités
 
-- 🔍 **Détection intelligente** : Scanne et détecte uniquement les vidéos téléchargeables (MP4, WebM, MOV, etc.)
-- 🎯 **Capture réseau** : Intercepte les vraies URLs de vidéos depuis les requêtes réseau (comme IDM)
-- 📸 **Miniatures vidéo** : Affiche les thumbnails/posters des vidéos pour une meilleure identification
-- 👁️ **Prévisualisation vidéo** : Prévisualisez chaque vidéo avant de la télécharger dans un lecteur intégré
-- ⬇️ **Téléchargement fiable** : Filtre automatiquement les vidéos en streaming (HLS/DASH) non téléchargeables
-- 🌍 **Multi-domaines** : Fonctionne sur tous les domaines Amazon (.com, .fr, .co.uk, .de, .ca, .it, .es)
-- 🎯 **Interface intuitive** : Interface utilisateur claire avec miniatures et informations détaillées
-- 🚀 **Rapide et léger** : Extension optimisée pour de meilleures performances
+- 🎥 **TOUTES les vidéos** : Détecte vidéos produits ET vidéos d'avis clients
+- 🔴 **Support HLS/m3u8** : Affiche toutes les vidéos y compris celles en streaming
+- 🎯 **Capture réseau** : Intercepte les URLs de vidéos depuis les requêtes réseau (comme IDM)
+- 📝 **Extraction des scripts** : Trouve les vidéos cachées dans le code JavaScript
+- 📸 **Miniatures vidéo** : Affiche les thumbnails/posters pour identification
+- 👁️ **Prévisualisation** : Prévisualisez toutes les vidéos dans un lecteur intégré
+- ⬇️ **Téléchargement universel** : Essaye de télécharger tous les formats (MP4, WebM, HLS, etc.)
+- 🌍 **Multi-domaines** : Tous les domaines Amazon (.com, .fr, .co.uk, .de, .ca, .it, .es)
+- 🚀 **Détection complète** : Analyse balises video, attributs data-*, scripts, conteneurs, requêtes réseau
 
 ## 📥 Installation
 
@@ -80,13 +81,43 @@ L'extension détecte plusieurs types de vidéos :
 3. **Conteneurs Amazon** : Vidéos dans les galeries et pages produits
 4. **🆕 Capture réseau** : URLs de vidéos interceptées depuis les requêtes HTTP (comme IDM)
 
+## 🆕 Version 1.2.0 - TOUTES LES VIDÉOS DÉBLOQUÉES !
+
+### 🎯 Changement majeur : Support total des vidéos d'avis clients
+
+Cette version supprime TOUS les filtres pour afficher **TOUTES les vidéos**, y compris :
+- ✅ **Vidéos d'avis clients** (souvent en HLS/m3u8)
+- ✅ **Vidéos en streaming** (.m3u8, .mpd, HLS, DASH)
+- ✅ **Vidéos extraites des scripts** (réactivé !)
+- ✅ **Segments vidéo** (.ts)
+
+### 🔴 Gestion des vidéos streaming
+
+- **Badge "STREAMING"** : Vidéos HLS/m3u8 clairement identifiées
+- **Téléchargement tenté** : L'extension essaye de télécharger tous les formats
+- **Conseils** : Pour les vidéos streaming, utilisez la prévisualisation + outil d'enregistrement écran
+- **URLs complètes** : Toutes les URLs sont affichées, même si non téléchargeables directement
+
+### 📝 Extraction améliorée
+
+- **Scripts analysés** : Recherche les URLs de vidéos dans tout le code JavaScript de la page
+- **Avis clients détectés** : Sélecteurs spécifiques pour les conteneurs d'avis (`[id*="review"]`, `[class*="review"]`)
+- **Capture réseau étendue** : Intercepte tous les formats vidéo dans les requêtes HTTP
+
+### 🎨 Interface mise à jour
+
+- **Bordure rouge** : Vidéos streaming ont une bordure gauche rouge
+- **Badge pulsant** : Type de vidéo pulse pour le streaming
+- **Bouton "Essayer"** : Au lieu de "Télécharger" pour le streaming
+- **Conseils affichés** : Astuces pour capturer les vidéos streaming
+
 ## ✅ Améliorations v1.1.0
 
 ### Corrections importantes
-- ✅ **Filtrage intelligent** : Suppression des vidéos en streaming (HLS/DASH) non téléchargeables
+- ✅ **Filtrage intelligent** : Suppression des vidéos en streaming (HLS/DASH) non téléchargeables *(ANNULÉ en v1.2.0)*
 - ✅ **Capture réseau** : Intercepte les vraies URLs de vidéos comme Internet Download Manager
-- ✅ **Validation des URLs** : Vérifie que les vidéos sont réellement téléchargeables (MP4, WebM, MOV, etc.)
-- ✅ **Plus d'erreurs "Extracted Video"** : Seules les vidéos valides sont affichées
+- ✅ **Validation des URLs** : Vérifie que les vidéos sont réellement téléchargeables (MP4, WebM, MOV, etc.) *(ANNULÉ en v1.2.0)*
+- ✅ **Plus d'erreurs "Extracted Video"** : Seules les vidéos valides sont affichées *(ANNULÉ en v1.2.0)*
 
 ### Nouvelles fonctionnalités
 - 📸 **Miniatures vidéo** : Affiche les thumbnails/posters pour identifier facilement les vidéos
