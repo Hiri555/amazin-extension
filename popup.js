@@ -1,6 +1,8 @@
 // Popup script pour gérer l'interface utilisateur
 
 let currentVideos = [];
+let currentPreviewUrl = '';
+let currentPreviewFilename = '';
 
 // Éléments DOM
 const scanBtn = document.getElementById('scanBtn');
@@ -8,6 +10,16 @@ const downloadAllBtn = document.getElementById('downloadAllBtn');
 const videoList = document.getElementById('videoList');
 const videoCount = document.getElementById('videoCount');
 const loading = document.getElementById('loading');
+
+// Éléments de la modal
+const previewModal = document.getElementById('previewModal');
+const previewVideo = document.getElementById('previewVideo');
+const previewSource = document.getElementById('previewSource');
+const previewTitle = document.getElementById('previewTitle');
+const videoUrl = document.getElementById('videoUrl');
+const closeModal = document.getElementById('closeModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const downloadFromPreview = document.getElementById('downloadFromPreview');
 
 // Scanner la page pour les vidéos
 async function scanForVideos() {
@@ -77,6 +89,9 @@ function displayVideos(videos) {
         ${video.poster ? `<div style="font-size: 11px; color: #888;">📷 Poster disponible</div>` : ''}
         <div class="video-url">${truncateUrl(mainUrl, 60)}</div>
         <div class="video-actions">
+          <button class="btn btn-preview preview-video" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" data-title="${escapeHtml(video.title)}">
+            👁️ Prévisualiser
+          </button>
           <button class="btn btn-download download-single" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}">
             ⬇️ Télécharger
           </button>
@@ -85,6 +100,16 @@ function displayVideos(videos) {
       </div>
     `;
   }).join('');
+
+  // Ajouter les event listeners pour les boutons de prévisualisation
+  document.querySelectorAll('.preview-video').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const url = e.target.getAttribute('data-url');
+      const filename = e.target.getAttribute('data-filename');
+      const title = e.target.getAttribute('data-title');
+      openPreviewModal(url, filename, title);
+    });
+  });
 
   // Ajouter les event listeners pour les boutons de téléchargement
   document.querySelectorAll('.download-single').forEach(btn => {
@@ -186,6 +211,69 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+// Fonction pour ouvrir la modal de prévisualisation
+function openPreviewModal(url, filename, title) {
+  currentPreviewUrl = url;
+  currentPreviewFilename = filename;
+
+  // Mettre à jour le titre et l'URL
+  previewTitle.textContent = title || 'Prévisualisation vidéo';
+  videoUrl.textContent = `URL: ${url}`;
+
+  // Charger la vidéo
+  previewSource.src = url;
+  previewVideo.load();
+
+  // Afficher la modal
+  previewModal.style.display = 'flex';
+
+  // Démarrer la lecture automatiquement
+  previewVideo.play().catch(err => {
+    console.log('Lecture automatique bloquée:', err);
+  });
+}
+
+// Fonction pour fermer la modal
+function closePreviewModal() {
+  // Arrêter la vidéo
+  previewVideo.pause();
+  previewSource.src = '';
+
+  // Masquer la modal
+  previewModal.style.display = 'none';
+
+  // Réinitialiser les variables
+  currentPreviewUrl = '';
+  currentPreviewFilename = '';
+}
+
+// Télécharger depuis la modal
+function downloadFromPreviewModal() {
+  if (currentPreviewUrl && currentPreviewFilename) {
+    const button = downloadFromPreview;
+    downloadVideo(currentPreviewUrl, currentPreviewFilename, button);
+  }
+}
+
+// Event listeners pour la modal
+closeModal.addEventListener('click', closePreviewModal);
+closeModalBtn.addEventListener('click', closePreviewModal);
+downloadFromPreview.addEventListener('click', downloadFromPreviewModal);
+
+// Fermer la modal en cliquant en dehors
+previewModal.addEventListener('click', (e) => {
+  if (e.target === previewModal) {
+    closePreviewModal();
+  }
+});
+
+// Fermer la modal avec la touche Échap
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && previewModal.style.display === 'flex') {
+    closePreviewModal();
+  }
+});
 
 // Event listeners
 scanBtn.addEventListener('click', scanForVideos);

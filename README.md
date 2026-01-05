@@ -5,6 +5,7 @@ Extension Chrome pour télécharger facilement toutes les vidéos d'une page pro
 ## ✨ Fonctionnalités
 
 - 🔍 **Détection automatique** : Scanne et détecte toutes les vidéos présentes sur une page produit Amazon
+- 👁️ **Prévisualisation vidéo** : Prévisualisez chaque vidéo avant de la télécharger dans un lecteur intégré
 - ⬇️ **Téléchargement simple** : Téléchargez une vidéo individuellement ou toutes en un clic
 - 🌍 **Multi-domaines** : Fonctionne sur tous les domaines Amazon (.com, .fr, .co.uk, .de, .ca, .it, .es)
 - 🎯 **Interface intuitive** : Interface utilisateur claire et facile à utiliser
@@ -55,10 +56,17 @@ Cliquez sur l'icône orange de l'extension dans la barre d'outils Chrome.
 ### Étape 3 : Scanner et télécharger
 - L'extension scanne automatiquement la page au chargement
 - Vous pouvez aussi cliquer sur "🔍 Scanner la page" pour rescanner
+- Cliquez sur "👁️ Prévisualiser" pour voir la vidéo avant de télécharger
 - Cliquez sur "⬇️ Télécharger" pour une vidéo spécifique
 - Ou cliquez sur "⬇️ Tout télécharger" pour télécharger toutes les vidéos
 
-### Étape 4 : Retrouvez vos vidéos
+### Étape 4 : Prévisualisation (optionnel)
+- Cliquez sur "👁️ Prévisualiser" pour ouvrir le lecteur vidéo intégré
+- La vidéo se lance automatiquement dans une modal élégante
+- Vous pouvez contrôler la lecture (play, pause, volume, plein écran)
+- Téléchargez directement depuis la modal ou fermez-la (bouton ×, touche Échap, clic en dehors)
+
+### Étape 5 : Retrouvez vos vidéos
 Les vidéos sont téléchargées dans votre dossier de téléchargements par défaut de Chrome.
 
 ## 🎯 Types de vidéos détectées

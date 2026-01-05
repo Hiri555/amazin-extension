@@ -231,3 +231,164 @@ header h1 {
   font-size: 11px;
   text-align: center;
 }
+
+/* Bouton de prévisualisation */
+.btn-preview {
+  background: #0066c0;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-preview:hover {
+  background: #004d99;
+}
+
+.btn-secondary {
+  background: #666;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Modal de prévisualisation */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #FF9900 0%, #FF6B00 100%);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 20px;
+  max-height: calc(90vh - 180px);
+  overflow-y: auto;
+}
+
+.modal-body video {
+  width: 100%;
+  max-height: 400px;
+  background: #000;
+  border-radius: 8px;
+  outline: none;
+}
+
+.video-info {
+  margin-top: 15px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  border-left: 4px solid #FF9900;
+}
+
+.video-info-url {
+  font-size: 11px;
+  color: #666;
+  word-break: break-all;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  background: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-footer .btn-download {
+  flex: 1;
+}
+
+.modal-footer .btn-secondary {
+  flex: 0 0 auto;
+}
