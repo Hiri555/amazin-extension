@@ -4,11 +4,13 @@ Extension Chrome pour télécharger facilement toutes les vidéos d'une page pro
 
 ## ✨ Fonctionnalités
 
-- 🔍 **Détection automatique** : Scanne et détecte toutes les vidéos présentes sur une page produit Amazon
+- 🔍 **Détection intelligente** : Scanne et détecte uniquement les vidéos téléchargeables (MP4, WebM, MOV, etc.)
+- 🎯 **Capture réseau** : Intercepte les vraies URLs de vidéos depuis les requêtes réseau (comme IDM)
+- 📸 **Miniatures vidéo** : Affiche les thumbnails/posters des vidéos pour une meilleure identification
 - 👁️ **Prévisualisation vidéo** : Prévisualisez chaque vidéo avant de la télécharger dans un lecteur intégré
-- ⬇️ **Téléchargement simple** : Téléchargez une vidéo individuellement ou toutes en un clic
+- ⬇️ **Téléchargement fiable** : Filtre automatiquement les vidéos en streaming (HLS/DASH) non téléchargeables
 - 🌍 **Multi-domaines** : Fonctionne sur tous les domaines Amazon (.com, .fr, .co.uk, .de, .ca, .it, .es)
-- 🎯 **Interface intuitive** : Interface utilisateur claire et facile à utiliser
+- 🎯 **Interface intuitive** : Interface utilisateur claire avec miniatures et informations détaillées
 - 🚀 **Rapide et léger** : Extension optimisée pour de meilleures performances
 
 ## 📥 Installation
@@ -73,11 +75,24 @@ Les vidéos sont téléchargées dans votre dossier de téléchargements par dé
 
 L'extension détecte plusieurs types de vidéos :
 
-1. **Balises `<video>` HTML5** : Vidéos standard intégrées
-2. **Vidéos dans iframes** : Lecteurs vidéo embarqués
-3. **Attributs data-*** : Vidéos chargées dynamiquement
-4. **Conteneurs Amazon** : Vidéos dans les galeries produits
-5. **URLs extraites** : Liens vidéo trouvés dans les scripts de la page
+1. **Balises `<video>` HTML5** : Vidéos standard intégrées avec miniatures
+2. **Attributs data-*** : Vidéos chargées dynamiquement par Amazon
+3. **Conteneurs Amazon** : Vidéos dans les galeries et pages produits
+4. **🆕 Capture réseau** : URLs de vidéos interceptées depuis les requêtes HTTP (comme IDM)
+
+## ✅ Améliorations v1.1.0
+
+### Corrections importantes
+- ✅ **Filtrage intelligent** : Suppression des vidéos en streaming (HLS/DASH) non téléchargeables
+- ✅ **Capture réseau** : Intercepte les vraies URLs de vidéos comme Internet Download Manager
+- ✅ **Validation des URLs** : Vérifie que les vidéos sont réellement téléchargeables (MP4, WebM, MOV, etc.)
+- ✅ **Plus d'erreurs "Extracted Video"** : Seules les vidéos valides sont affichées
+
+### Nouvelles fonctionnalités
+- 📸 **Miniatures vidéo** : Affiche les thumbnails/posters pour identifier facilement les vidéos
+- 📐 **Informations détaillées** : Résolution vidéo (width x height) quand disponible
+- 🎯 **Meilleure détection** : Focus sur les vidéos Amazon produits réellement téléchargeables
+- 🔍 **Déduplication** : Évite les doublons dans la liste des vidéos
 
 ## 🔧 Structure du projet
 

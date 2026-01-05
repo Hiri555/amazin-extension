@@ -1,4 +1,58 @@
-// Background service worker pour gérer les téléchargements
+// Background service worker pour gérer les téléchargements et capturer les vidéos
+
+// Stockage des vidéos capturées par onglet
+const capturedVideosByTab = new Map();
+
+// Fonction pour valider si une URL est une vidéo téléchargeable
+function isVideoUrl(url) {
+  const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
+  const lowerUrl = url.toLowerCase();
+  return videoExtensions.some(ext => lowerUrl.includes(ext));
+}
+
+// Intercepter les requêtes réseau pour capturer les URLs de vidéos
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    if (details.tabId > 0 && isVideoUrl(details.url)) {
+      // Stocker la vidéo capturée
+      if (!capturedVideosByTab.has(details.tabId)) {
+        capturedVideosByTab.set(details.tabId, []);
+      }
+
+      const videos = capturedVideosByTab.get(details.tabId);
+      const exists = videos.some(v => v.url === details.url);
+
+      if (!exists) {
+        const videoData = {
+          url: details.url,
+          timestamp: Date.now(),
+          size: 0
+        };
+        videos.push(videoData);
+
+        // Envoyer au content script
+        chrome.tabs.sendMessage(details.tabId, {
+          action: 'addCapturedVideo',
+          videoData: videoData
+        }).catch(err => {
+          // Le content script n'est peut-être pas encore chargé
+          console.log('Content script non disponible:', err);
+        });
+
+        console.log('Vidéo capturée depuis réseau:', details.url);
+      }
+    }
+  },
+  {
+    urls: ["<all_urls>"],
+    types: ["media", "xmlhttprequest", "other"]
+  }
+);
+
+// Nettoyer les vidéos capturées quand un onglet est fermé
+chrome.tabs.onRemoved.addListener((tabId) => {
+  capturedVideosByTab.delete(tabId);
+});
 
 // Écouter les messages du popup et du content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

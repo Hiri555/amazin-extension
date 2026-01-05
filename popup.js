@@ -79,23 +79,34 @@ function displayVideos(videos) {
   videoList.innerHTML = videos.map((video, index) => {
     const mainUrl = video.sources[0];
     const filename = `amazon-video-${index + 1}.mp4`;
+    const hasThumbnail = video.thumbnail || video.poster;
 
     return `
       <div class="video-item" data-index="${index}">
-        <div class="video-header">
-          <span class="video-title">${video.title}</span>
-          <span class="video-type">${video.type}</span>
-        </div>
-        ${video.poster ? `<div style="font-size: 11px; color: #888;">📷 Poster disponible</div>` : ''}
-        <div class="video-url">${truncateUrl(mainUrl, 60)}</div>
-        <div class="video-actions">
-          <button class="btn btn-preview preview-video" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" data-title="${escapeHtml(video.title)}">
-            👁️ Prévisualiser
-          </button>
-          <button class="btn btn-download download-single" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}">
-            ⬇️ Télécharger
-          </button>
-          ${video.sources.length > 1 ? `<span style="font-size: 11px; color: #666;">+${video.sources.length - 1} source(s)</span>` : ''}
+        ${hasThumbnail ? `
+          <div class="video-thumbnail-container">
+            <img src="${escapeHtml(video.thumbnail || video.poster)}"
+                 alt="${escapeHtml(video.title)}"
+                 class="video-thumbnail"
+                 onerror="this.style.display='none'">
+          </div>
+        ` : ''}
+        <div class="video-content">
+          <div class="video-header">
+            <span class="video-title">${video.title}</span>
+            <span class="video-type">${video.type}</span>
+          </div>
+          <div class="video-url">${truncateUrl(mainUrl, 45)}</div>
+          ${video.width && video.height ? `<div class="video-info-text">📐 ${video.width}x${video.height}</div>` : ''}
+          <div class="video-actions">
+            <button class="btn btn-preview preview-video" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" data-title="${escapeHtml(video.title)}">
+              👁️ Prévisualiser
+            </button>
+            <button class="btn btn-download download-single" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}">
+              ⬇️ Télécharger
+            </button>
+            ${video.sources.length > 1 ? `<div style="font-size: 10px; color: #666; margin-top: 5px;">+${video.sources.length - 1} source(s)</div>` : ''}
+          </div>
         </div>
       </div>
     `;
