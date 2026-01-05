@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon Video Downloader</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎬 Amazon Video Downloader</h1>
+      <p class="subtitle">Téléchargez les vidéos de cette page</p>
+    </header>
+
+    <div class="stats">
+      <span id="videoCount">0</span> vidéo(s) détectée(s)
+    </div>
+
+    <div class="actions">
+      <button id="scanBtn" class="btn btn-primary">🔍 Scanner la page</button>
+      <button id="downloadAllBtn" class="btn btn-success" disabled>⬇️ Tout télécharger</button>
+    </div>
+
+    <div id="videoList" class="video-list">
+      <div class="empty-state">
+        <p>Cliquez sur "Scanner la page" pour détecter les vidéos</p>
+      </div>
+    </div>
+
+    <div id="loading" class="loading" style="display: none;">
+      <div class="spinner"></div>
+      <p>Recherche de vidéos...</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

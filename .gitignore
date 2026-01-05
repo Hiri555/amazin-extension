@@ -1,0 +1,40 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# Archives
+*.zip
+*.rar
+*.7z
+
+# Environnement
+.env
+.venv
+env/
+venv/
+
+# Fichiers temporaires
+*.tmp
+temp/
