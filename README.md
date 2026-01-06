@@ -6,11 +6,12 @@ Extension Chrome pour télécharger facilement toutes les vidéos d'une page pro
 
 - 🎥 **TOUTES les vidéos** : Détecte vidéos produits ET vidéos d'avis clients
 - 🔴 **Support HLS/m3u8** : Affiche toutes les vidéos y compris celles en streaming
+- 📥 **🆕 Intégration yt-dlp** : Téléchargement en 1 clic des vidéos HLS/m3u8 via serveur local
 - 🎯 **Capture réseau** : Intercepte les URLs de vidéos depuis les requêtes réseau (comme IDM)
 - 📝 **Extraction des scripts** : Trouve les vidéos cachées dans le code JavaScript
 - 📸 **Miniatures vidéo** : Affiche les thumbnails/posters pour identification
 - 👁️ **Prévisualisation** : Prévisualisez toutes les vidéos dans un lecteur intégré
-- ⬇️ **Téléchargement universel** : Essaye de télécharger tous les formats (MP4, WebM, HLS, etc.)
+- ⬇️ **Téléchargement universel** : Bouton yt-dlp pour vidéos streaming, téléchargement direct pour MP4
 - 🌍 **Multi-domaines** : Tous les domaines Amazon (.com, .fr, .co.uk, .de, .ca, .it, .es)
 - 🚀 **Détection complète** : Analyse balises video, attributs data-*, scripts, conteneurs, requêtes réseau
 
@@ -46,6 +47,51 @@ Extension Chrome pour télécharger facilement toutes les vidéos d'une page pro
    - Extrayez le fichier ZIP sur votre ordinateur
 
 2. **Suivez les étapes 2-5 de la Méthode 1**
+
+## 📥 Installation du serveur yt-dlp (OPTIONNEL mais RECOMMANDÉ)
+
+Pour télécharger les vidéos streaming (HLS/m3u8) des **avis clients** en 1 clic :
+
+### Étape 1 : Installer les prérequis
+
+1. **Installez Node.js** : https://nodejs.org/
+2. **Installez yt-dlp** :
+```bash
+# Windows/macOS/Linux
+pip install yt-dlp
+
+# ou sur macOS avec Homebrew
+brew install yt-dlp
+```
+
+### Étape 2 : Installer le serveur
+
+```bash
+cd amazin-extension/server
+npm install
+```
+
+### Étape 3 : Démarrer le serveur
+
+```bash
+npm start
+```
+
+Vous devriez voir :
+```
+✅ Serveur démarré sur http://localhost:3000
+✅ yt-dlp version: 2024.xx.xx
+🚀 Prêt à télécharger des vidéos !
+```
+
+### Étape 4 : Utiliser l'extension
+
+Maintenant quand vous voyez une vidéo avec le badge 🔴 STREAMING :
+1. Cliquez sur le bouton **"📥 yt-dlp"** (vert)
+2. La vidéo se télécharge automatiquement dans `~/Downloads/Amazon-Videos/`
+3. C'est tout ! ✨
+
+**📖 Guide complet** : Voir [server/README.md](server/README.md)
 
 ## 🚀 Utilisation
 

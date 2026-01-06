@@ -72,6 +72,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ success: false, error: error.message });
       });
     return true; // Indique une réponse asynchrone
+  } else if (request.action === 'downloadWithYtDlp') {
+    // Utiliser yt-dlp via le serveur local
+    downloadWithYtDlp(request.url, request.filename)
+      .then(() => {
+        sendResponse({ success: true });
+      })
+      .catch((error) => {
+        console.error('Erreur de téléchargement yt-dlp:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    return true;
+  } else if (request.action === 'checkServer') {
+    // Vérifier si le serveur local est actif
+    checkServerHealth()
+      .then((health) => {
+        sendResponse({ success: true, health });
+      })
+      .catch((error) => {
+        sendResponse({ success: false, error: error.message });
+      });
+    return true;
   }
 });
 
@@ -129,6 +150,54 @@ chrome.runtime.onInstalled.addListener((details) => {
     console.log('Amazon Video Downloader mis à jour!');
   }
 });
+
+// Fonction pour télécharger avec yt-dlp via le serveur local
+async function downloadWithYtDlp(url, filename) {
+  const SERVER_URL = 'http://localhost:3000';
+
+  try {
+    console.log('📥 Téléchargement avec yt-dlp:', url);
+
+    const response = await fetch(`${SERVER_URL}/download`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url, filename })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur serveur: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Réponse serveur:', result);
+
+    return result;
+  } catch (error) {
+    console.error('❌ Erreur de connexion au serveur:', error);
+    throw new Error('Le serveur local n\'est pas démarré. Lancez: cd server && npm start');
+  }
+}
+
+// Fonction pour vérifier l'état du serveur local
+async function checkServerHealth() {
+  const SERVER_URL = 'http://localhost:3000';
+
+  try {
+    const response = await fetch(`${SERVER_URL}/health`);
+    if (!response.ok) {
+      throw new Error('Serveur non accessible');
+    }
+
+    const health = await response.json();
+    console.log('✅ Serveur actif:', health);
+    return health;
+  } catch (error) {
+    console.log('❌ Serveur non disponible');
+    throw error;
+  }
+}
 
 // Nettoyer les téléchargements échoués ou annulés
 chrome.downloads.onChanged.addListener((delta) => {

@@ -104,11 +104,17 @@ function displayVideos(videos) {
             <button class="btn btn-preview preview-video" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" data-title="${escapeHtml(video.title)}">
               👁️ Prévisualiser
             </button>
-            <button class="btn btn-download download-single" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" title="${isStreaming ? 'Télécharge l\'URL (peut ne pas fonctionner pour le streaming)' : 'Télécharger'}">
-              ⬇️ ${isStreaming ? 'Essayer' : 'Télécharger'}
-            </button>
+            ${isStreaming ? `
+              <button class="btn btn-ytdlp download-ytdlp" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}" title="Télécharger avec yt-dlp (serveur local requis)">
+                📥 yt-dlp
+              </button>
+            ` : `
+              <button class="btn btn-download download-single" data-url="${escapeHtml(mainUrl)}" data-filename="${filename}">
+                ⬇️ Télécharger
+              </button>
+            `}
             ${video.sources.length > 1 ? `<div style="font-size: 10px; color: #666; margin-top: 5px;">+${video.sources.length - 1} source(s)</div>` : ''}
-            ${isStreaming ? '<div class="streaming-hint">💡 Utilisez la prévisualisation puis un outil d\'enregistrement d\'écran pour les vidéos streaming</div>' : ''}
+            ${isStreaming ? '<div class="streaming-hint">💡 Utilisez le bouton "yt-dlp" pour télécharger (serveur local requis)</div>' : ''}
           </div>
         </div>
       </div>
@@ -131,6 +137,15 @@ function displayVideos(videos) {
       const url = e.target.getAttribute('data-url');
       const filename = e.target.getAttribute('data-filename');
       downloadVideo(url, filename, e.target);
+    });
+  });
+
+  // Ajouter les event listeners pour les boutons yt-dlp
+  document.querySelectorAll('.download-ytdlp').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const url = e.target.getAttribute('data-url');
+      const filename = e.target.getAttribute('data-filename');
+      downloadVideoWithYtDlp(url, filename, e.target);
     });
   });
 }
@@ -162,6 +177,39 @@ function downloadVideo(url, filename, button) {
         button.disabled = false;
         button.style.background = '';
       }, 2000);
+    }
+  });
+}
+
+// Télécharger une vidéo avec yt-dlp (via serveur local)
+function downloadVideoWithYtDlp(url, filename, button) {
+  const originalText = button.textContent;
+  button.textContent = '⏳ yt-dlp...';
+  button.disabled = true;
+
+  chrome.runtime.sendMessage({
+    action: 'downloadWithYtDlp',
+    url: url,
+    filename: filename
+  }, (response) => {
+    if (response && response.success) {
+      button.textContent = '✅ Téléchargé';
+      button.style.background = '#00C851';
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+        button.style.background = '';
+      }, 3000);
+    } else {
+      button.textContent = '❌ Serveur?';
+      button.style.background = '#ff4444';
+      button.title = response?.error || 'Serveur local non démarré';
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+        button.style.background = '';
+        button.title = 'Télécharger avec yt-dlp (serveur local requis)';
+      }, 3000);
     }
   });
 }
